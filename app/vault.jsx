@@ -64,7 +64,7 @@ export default function VaultScreen() {
           </View>
           <View style={styles.cardInfo}>
             <Text style={styles.siteName}>{item.site}</Text>
-            <Text style={styles.username}>{item.username}</Text>
+            <Text style={styles.username}>{decrypt(item.username)}</Text>
           </View>
         </View>
 

@@ -35,7 +35,7 @@ export default function EntryScreen() {
     const entry = entries.find((e) => e.id === id);
     if (entry) {
       setSite(entry.site);
-      setUsername(entry.username);
+      setUsername(decrypt(entry.username));
       setPassword(decrypt(entry.password));
       setNotes(entry.notes || "");
     }
@@ -75,7 +75,13 @@ export default function EntryScreen() {
     if (isEdit) {
       const updated = entries.map((e) =>
         e.id === id
-          ? { ...e, site, username, password: encrypt(password), notes }
+          ? {
+              ...e,
+              site,
+              username: encrypt(username),
+              password: encrypt(password),
+              notes,
+            }
           : e,
       );
       await AsyncStorage.setItem("vault_entries", JSON.stringify(updated));
@@ -83,7 +89,7 @@ export default function EntryScreen() {
       const newEntry = {
         id: Date.now().toString(),
         site,
-        username,
+        username: encrypt(username),
         password: encrypt(password),
         notes,
       };
