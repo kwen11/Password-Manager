@@ -1,7 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Alert, Text, TouchableOpacity, Vibration, View } from "react-native";
+import { decrypt } from "../constants/crypto";
 import globalStyles from "../theme/styles";
 
 export default function LoginScreen() {
@@ -14,7 +15,7 @@ export default function LoginScreen() {
   }, []);
 
   async function checkFirstLaunch() {
-    const storedPin = await SecureStore.getItemAsync("master_pin");
+    const storedPin = await AsyncStorage.getItem("master_pin");
     if (!storedPin) router.replace("/setup");
   }
 
@@ -22,8 +23,8 @@ export default function LoginScreen() {
     const newPin = pin + digit;
     setPin(newPin);
     if (newPin.length === MAX) {
-      const stored = await SecureStore.getItemAsync("master_pin");
-      if (newPin === stored) {
+      const stored = await AsyncStorage.getItem("master_pin");
+      if (newPin === decrypt(stored)) {
         router.replace("/vault");
       } else {
         Vibration.vibrate(400);

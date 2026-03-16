@@ -1,7 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Alert, Text, TouchableOpacity, Vibration, View } from "react-native";
+import { encrypt } from "../constants/crypto";
 import globalStyles from "../theme/styles";
 
 export default function SetupScreen() {
@@ -21,7 +22,7 @@ export default function SetupScreen() {
       setConfirm(newConfirm);
       if (newConfirm.length === MAX) {
         if (newConfirm === pin) {
-          await SecureStore.setItemAsync("master_pin", pin);
+          await AsyncStorage.setItem("master_pin", encrypt(pin));
           router.replace("/vault");
         } else {
           Vibration.vibrate(400);
