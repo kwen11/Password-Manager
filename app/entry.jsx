@@ -191,7 +191,7 @@ export default function EntryScreen() {
               onPress={() => setShowPass((s) => !s)}
               style={styles.eyeBtn}
             >
-              <Text style={styles.eyeIcon}>{showPass ? "🙈" : "👁️"}</Text>
+              <Text style={styles.eyeIcon}>{showPass ? "👁️" : "🙈"}</Text>
             </TouchableOpacity>
           </View>
 
