@@ -110,7 +110,7 @@ export default function EntryScreen() {
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>← Back</Text>
+          <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
         <Text style={globalStyles.titleSmall}>
           {isViewing ? "View Entry" : isEdit ? "Edit Entry" : "New Entry"}

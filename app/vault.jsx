@@ -75,7 +75,7 @@ export default function VaultScreen() {
             }
             style={styles.actionBtn}
           >
-            <Text style={styles.actionIcon}>✏️</Text>
+            <Text style={styles.actionIcon}>➡️</Text>
           </TouchableOpacity>
         </View>
 
