@@ -15,9 +15,10 @@ import colors from "../theme/colors";
 import globalStyles from "../theme/styles";
 
 export default function EntryScreen() {
-  const { id } = useLocalSearchParams();
+  const { id, view } = useLocalSearchParams();
   const router = useRouter();
   const isEdit = !!id;
+  const [isViewing, setIsViewing] = useState(view === "true");
 
   const [site, setSite] = useState("");
   const [username, setUsername] = useState("");
@@ -112,86 +113,127 @@ export default function EntryScreen() {
           <Text style={styles.back}>← Back</Text>
         </TouchableOpacity>
         <Text style={globalStyles.titleSmall}>
-          {isEdit ? "Edit Entry" : "New Entry"}
+          {isViewing ? "View Entry" : isEdit ? "Edit Entry" : "New Entry"}
         </Text>
+        {isViewing && (
+          <TouchableOpacity onPress={() => setIsViewing(false)}>
+            <Text style={styles.editToggle}>Edit</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      <Text style={globalStyles.label}>Site / App Name *</Text>
-      <TextInput
-        style={globalStyles.input}
-        value={site}
-        onChangeText={setSite}
-        placeholder="e.g. Google"
-        placeholderTextColor="#555"
-      />
-
-      <Text style={globalStyles.label}>Username / Email *</Text>
-      <TextInput
-        style={globalStyles.input}
-        value={username}
-        onChangeText={setUsername}
-        placeholder="e.g. user@gmail.com"
-        placeholderTextColor="#555"
-        autoCapitalize="none"
-      />
-
-      <Text style={globalStyles.label}>Password *</Text>
-      <View style={styles.passRow}>
-        <TextInput
-          style={[globalStyles.input, { flex: 1, marginBottom: 0 }]}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Enter password"
-          placeholderTextColor="#555"
-          secureTextEntry={!showPass}
-          autoCapitalize="none"
-        />
-        <TouchableOpacity
-          onPress={() => setShowPass((s) => !s)}
-          style={styles.eyeBtn}
-        >
-          <Text style={styles.eyeIcon}>{showPass ? "👁️" : "🙈"}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Password strength bar */}
-      {password.length > 0 && (
-        <View style={styles.strengthContainer}>
-          <View style={styles.strengthBar}>
-            {Array(5)
-              .fill(0)
-              .map((_, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.strengthSegment,
-                    i < strength && { backgroundColor: strengthColor },
-                  ]}
-                />
-              ))}
+      {isViewing ? (
+        // VIEW MODE
+        <View>
+          <Text style={globalStyles.label}>Site / App Name</Text>
+          <View style={styles.viewField}>
+            <Text style={styles.viewText}>{site}</Text>
           </View>
-          <Text style={[styles.strengthLabel, { color: strengthColor }]}>
-            {strengthLabel}
-          </Text>
+
+          <Text style={globalStyles.label}>Username / Email</Text>
+          <View style={styles.viewField}>
+            <Text style={styles.viewText}>{username}</Text>
+          </View>
+
+          <Text style={globalStyles.label}>Password</Text>
+          <View style={[styles.viewField, styles.viewFieldRow]}>
+            <Text style={styles.viewText}>
+              {showPass ? password : "••••••••"}
+            </Text>
+            <TouchableOpacity onPress={() => setShowPass((s) => !s)}>
+              <Text style={styles.eyeIcon}>{showPass ? "👁️" : "🙈"}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {notes ? (
+            <>
+              <Text style={globalStyles.label}>Notes</Text>
+              <View style={styles.viewField}>
+                <Text style={styles.viewText}>{notes}</Text>
+              </View>
+            </>
+          ) : null}
+        </View>
+      ) : (
+        // EDIT/ADD MODE
+        <View>
+          <Text style={globalStyles.label}>Site / App Name *</Text>
+          <TextInput
+            style={globalStyles.input}
+            value={site}
+            onChangeText={setSite}
+            placeholder="e.g. Google"
+            placeholderTextColor={colors.textMuted}
+          />
+
+          <Text style={globalStyles.label}>Username / Email *</Text>
+          <TextInput
+            style={globalStyles.input}
+            value={username}
+            onChangeText={setUsername}
+            placeholder="e.g. user@gmail.com"
+            placeholderTextColor={colors.textMuted}
+            autoCapitalize="none"
+          />
+
+          <Text style={globalStyles.label}>Password *</Text>
+          <View style={styles.passRow}>
+            <TextInput
+              style={[globalStyles.input, { flex: 1, marginBottom: 0 }]}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Enter password"
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry={!showPass}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              onPress={() => setShowPass((s) => !s)}
+              style={styles.eyeBtn}
+            >
+              <Text style={styles.eyeIcon}>{showPass ? "🙈" : "👁️"}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {password.length > 0 && (
+            <View style={styles.strengthContainer}>
+              <View style={styles.strengthBar}>
+                {Array(5)
+                  .fill(0)
+                  .map((_, i) => (
+                    <View
+                      key={i}
+                      style={[
+                        styles.strengthSegment,
+                        i < strength && { backgroundColor: strengthColor },
+                      ]}
+                    />
+                  ))}
+              </View>
+              <Text style={[styles.strengthLabel, { color: strengthColor }]}>
+                {strengthLabel}
+              </Text>
+            </View>
+          )}
+
+          <Text style={globalStyles.label}>Notes (optional)</Text>
+          <TextInput
+            style={[globalStyles.input, styles.notesInput]}
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Extra info, security questions..."
+            placeholderTextColor={colors.textMuted}
+            multiline
+            numberOfLines={3}
+          />
+
+          <TouchableOpacity style={globalStyles.primaryButton} onPress={save}>
+            <Text style={globalStyles.primaryButtonText}>
+              {isEdit ? "Save Changes" : "Add Entry"}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
-
-      <Text style={globalStyles.label}>Notes (optional)</Text>
-      <TextInput
-        style={[globalStyles.input, styles.notesInput]}
-        value={notes}
-        onChangeText={setNotes}
-        placeholder="Extra info, security questions..."
-        placeholderTextColor="#555"
-        multiline
-        numberOfLines={3}
-      />
-
-      <TouchableOpacity style={globalStyles.primaryButton} onPress={save}>
-        <Text style={globalStyles.primaryButtonText}>
-          {isEdit ? "Save Changes" : "Add Entry"}
-        </Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -204,6 +246,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   back: { color: colors.primary, fontSize: 16 },
+  editToggle: { color: colors.primary, fontSize: 14, marginLeft: "auto" },
   passRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   eyeBtn: { padding: 14, backgroundColor: colors.surface, borderRadius: 12 },
   eyeIcon: { fontSize: 18 },
@@ -221,5 +264,18 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: colors.surfaceAlt,
   },
+  strengthLabel: { fontSize: 12, width: 70 },
   notesInput: { height: 80, textAlignVertical: "top" },
+  viewField: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 4,
+  },
+  viewFieldRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  viewText: { color: colors.textPrimary, fontSize: 15 },
 });

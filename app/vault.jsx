@@ -66,6 +66,17 @@ export default function VaultScreen() {
             <Text style={styles.siteName}>{item.site}</Text>
             <Text style={styles.username}>{decrypt(item.username)}</Text>
           </View>
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/entry",
+                params: { id: item.id, view: "true" },
+              })
+            }
+            style={styles.actionBtn}
+          >
+            <Text style={styles.actionIcon}>✏️</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.passwordRow}>
@@ -84,14 +95,6 @@ export default function VaultScreen() {
               style={styles.actionBtn}
             >
               <Text style={styles.actionIcon}>📋</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                router.push({ pathname: "/entry", params: { id: item.id } })
-              }
-              style={styles.actionBtn}
-            >
-              <Text style={styles.actionIcon}>✏️</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => deleteEntry(item.id)}
